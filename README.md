@@ -1,3 +1,5 @@
+![vim sass colors sample](https://raw.githubusercontent.com/shmargum/vim-sass-colors/master/vim-sass-color-sample.png)
+
 This is a vim plugin to highlight sass color variables.
 
 This currently only works for hex values.
