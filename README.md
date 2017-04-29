@@ -2,6 +2,8 @@
 
 This is a vim plugin to highlight sass color variables.
 
+Install via pathogen
+
 This currently only works for hex values.
 
 This is currently optimized to recursively call all imports.
