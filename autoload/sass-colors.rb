@@ -1,3 +1,5 @@
+# CLUT from:
+# https://gist.github.com/MicahElliott/719710/8b8b962033efed8926ad8a8635b0a48630521a67
 CLUT = [  # color look-up table
 #    8-bit, RGB hex
 
@@ -270,20 +272,29 @@ CLUT_INVERSE = {}
 CLUT.each do |v|
   CLUT_INVERSE[v[1]] = v[0]
 end
-HEX_VALS = CLUT_INVERSE.keys.sort
+HEX_VALS = CLUT_INVERSE.keys
 
 
-$prefix = "app/assets/stylesheets/"
-$suffix = ".scss"
+prefix_regex = /\/(?:stylesheets|sass|scss)\//
+suffix_regex = /.(?:scss|sass|less)/
 
 current_file = ARGV[0]
-
-stuff = current_file.split($prefix)
-$app_root = stuff.length > 1 ? stuff[0] : ""
+$suffix = current_file[suffix_regex]
+current_dir = ARGV[0].sub(/\/[^\/]+$/,'')
+style_root_key = current_file[prefix_regex]
+if style_root_key
+  $app_root = "#{current_file.split(style_root_key)[0]}#{style_root_key}"
+else
+  $app_root = current_dir
+end
 
 $imports = [current_file]
 $colors = {}
 
+# square difference of 2 hex string
+def sq_dist hex1, hex2
+  (hex1.to_i(16) - hex2.to_i(16))**2
+end
 def approximate_color color
   r1, g1, b1 = color.scan(/.{2}/)
 
@@ -292,9 +303,7 @@ def approximate_color color
 
   HEX_VALS.each do |c|
     r2, g2, b2 = c.scan(/.{2}/)
-
-    dist_sq = (r2.to_i(16)-r1.to_i(16))*(r2.to_i(16)-r1.to_i(16))+(b2.to_i(16)-b1.to_i(16))*(b2.to_i(16)-b1.to_i(16))+(g2.to_i(16)-g1.to_i(16))*(g2.to_i(16)-g1.to_i(16))
-
+    dist_sq = sq_dist(r2, r1) + sq_dist(g2, g1) + sq_dist(b2, b1)
     if dist_sq < min_dist
       min_dist = dist_sq
       closest = c
@@ -313,8 +322,9 @@ def process_file file_string
     line.match(/\$([\w\-]+):\s*#(\h{6});/) do |match|
       xt = approximate_color(match[2])
       fgc = is_bright?(match[2]) ? "000000" : "ffffff"
+      xtfgc = fgc == "000000" ? "16" : "15"
       #$colors[match[1]] = match[2]
-      $colors[match[1]] = "#{match[2]}:#{xt}:#{fgc}"
+      $colors[match[1]] = "#{match[2]}:#{xt}:#{fgc}:#{xtfgc}"
     end
 
     line.match(/\$([\w\-]+):\s*\$([\w\-]+);/) do |match|
@@ -322,7 +332,7 @@ def process_file file_string
     end
 
     line.match(/@import\s+['"](.+)['"];/) do |match|
-      $imports << "#{$app_root}#{$prefix}#{match[1]}#{$suffix}"
+      $imports << "#{$app_root}#{match[1]}#{$suffix}"
     end
   end
 end
