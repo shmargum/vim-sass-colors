@@ -1,4 +1,4 @@
-![vim sass colors sample](https://raw.githubusercontent.com/shmargum/vim-sass-colors/master/vim-sass-color-sample-2.png)
+![vim sass colors sample](https://raw.githubusercontent.com/shmargum/vim-sass-colors/master/vim-sass-color-sample-3.png)
 
 This is a vim plugin to highlight sass color variables.
 

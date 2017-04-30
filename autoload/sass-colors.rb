@@ -278,7 +278,7 @@ HEX_VALS = CLUT_INVERSE.keys
 
 
 prefix_regex = /\/(?:stylesheets|sass|scss)\//
-suffix_regex = /.(?:scss|sass|less)/
+suffix_regex = /\.(?:scss|sass|less)/
 
 current_file = ARGV[0]
 $suffix = current_file[suffix_regex]
@@ -287,10 +287,10 @@ style_root_key = current_file[prefix_regex]
 if style_root_key
   $app_root = "#{current_file.split(style_root_key)[0]}#{style_root_key}"
 else
-  $app_root = current_dir
+  $app_root = current_dir+"/"
 end
 
-$imports = [current_file]
+$imports = []
 $included_files = Set.new
 $colors = []
 $colors_by_name = {}
@@ -336,7 +336,8 @@ def colors_for_hex guibg
   [xt, fgc, xtfgc, rgb]
 end
 
-def process_file file_string
+def process_file thing
+  file_string = File.open(thing);
   file_string.each_line do |line|
     line.match(/\$([\w\-]+)\s*:\s*#(\h{6});/) do |match|
       guibg = match[2].downcase
@@ -378,12 +379,15 @@ def process_file file_string
       fz = Dir.glob(fname)
       fz += Dir.glob(fname2) if fname2
       fz.each do |fzf|
-        $imports << fzf unless $included_files.include? fzf
+        process_file(fzf) unless $included_files.include? fzf
+        #$imports << fzf unless $included_files.include? fzf
         $included_files << fzf #this is a set
       end
     end
   end
 end
+
+process_file(current_file)
 
 while $imports.length > 0
   thing = $imports[0]
