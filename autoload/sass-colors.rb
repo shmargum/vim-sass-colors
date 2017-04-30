@@ -1,3 +1,5 @@
+require 'set'
+
 # CLUT from:
 # https://gist.github.com/MicahElliott/719710/8b8b962033efed8926ad8a8635b0a48630521a67
 CLUT = [  # color look-up table
@@ -289,6 +291,7 @@ else
 end
 
 $imports = [current_file]
+$included_files = Set.new
 $colors = {}
 
 # square difference of 2 hex string
@@ -332,7 +335,17 @@ def process_file file_string
     end
 
     line.match(/@import\s+['"](.+)['"];/) do |match|
-      $imports << "#{$app_root}#{match[1]}#{$suffix}"
+      fname = "#{$app_root}#{match[1]}#{$suffix}"
+      if fname["*"]
+        fz = Dir.glob(fname)
+        fz.each do |fzf|
+          $imports << fzf unless $included_files.include? fzf
+          $included_files << fzf #this is a set
+        end
+      else
+        $imports << fname unless $included_files.include? fname
+        $included_files << fname #this is a set
+      end
     end
   end
 end

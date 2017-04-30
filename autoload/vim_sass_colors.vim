@@ -3,7 +3,6 @@
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 function! vim_sass_colors#run()
-
   if has("termguicolors")
     set termguicolors
   endif
