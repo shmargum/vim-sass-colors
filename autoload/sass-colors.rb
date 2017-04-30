@@ -378,8 +378,10 @@ def process_file thing
       fz = Dir.glob(fname)
       fz += Dir.glob(fname2) if fname2
       fz.each do |fzf|
-        process_file(fzf) unless $included_files.include? fzf
-        $included_files << fzf #this is a set
+        unless $included_files.include? fzf
+          $included_files << fzf
+          process_file(fzf)
+        end
       end
     end
   end
