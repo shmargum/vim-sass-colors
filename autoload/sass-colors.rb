@@ -292,7 +292,9 @@ end
 
 $imports = [current_file]
 $included_files = Set.new
-$colors = {}
+$colors = []
+$colors_by_name = {}
+$defined_color_hex = Set.new
 
 # square difference of 2 hex string
 def sq_dist hex1, hex2
@@ -319,32 +321,65 @@ def is_bright? color
   r1, g1, b1 = color.scan(/.{2}/)
   (r1.to_i(16)*30 + g1.to_i(16)*59 + b1.to_i(16)*11) > 12000
 end
+def rgb2hex r, g, b
+  "#{r.to_i.to_s(16)}#{g.to_i.to_s(16)}#{b.to_i.to_s(16)}"
+end
+def hex2rgb hex
+  r, g, b = hex.scan(/.{2}/)
+  "rgb(#{r.to_i(16)},\\s*#{g.to_i(16)},\\s*#{b.to_i(16)})"
+end
+def colors_for_hex guibg
+  xt = approximate_color(guibg)
+  fgc = is_bright?(guibg) ? "000000" : "ffffff"
+  xtfgc = fgc == "000000" ? "16" : "15"
+  rgb = hex2rgb(guibg)
+  [xt, fgc, xtfgc, rgb]
+end
 
 def process_file file_string
   file_string.each_line do |line|
-    line.match(/\$([\w\-]+):\s*#(\h{6});/) do |match|
-      xt = approximate_color(match[2])
-      fgc = is_bright?(match[2]) ? "000000" : "ffffff"
-      xtfgc = fgc == "000000" ? "16" : "15"
-      #$colors[match[1]] = match[2]
-      $colors[match[1]] = "#{match[2]}:#{xt}:#{fgc}:#{xtfgc}"
+    line.match(/\$([\w\-]+)\s*:\s*#(\h{6});/) do |match|
+      guibg = match[2].downcase
+      xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+      $defined_color_hex << guibg
+      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+    end
+    line.scan(/#(\h{6})/) do |match|
+      guibg = match[0].downcase
+      unless $defined_color_hex.include? guibg
+        xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+        $defined_color_hex << guibg
+        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+      end
+    end
+    line.match(/\$([\w\-]+)\s*:\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)/) do |match|
+      guibg = rgb2hex(*match[2..4])
+      xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+      $defined_color_hex << guibg
+      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+    end
+    line.scan(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/) do |match|
+      guibg = rgb2hex(*match[0..2])
+      unless $defined_color_hex.include? guibg
+        xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+        $defined_color_hex << guibg
+        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+      end
     end
 
     line.match(/\$([\w\-]+):\s*\$([\w\-]+);/) do |match|
-      $colors[match[1]] = $colors[match[2]] if $colors[match[2]]
+      $colors_by_name[match[1]] = $colors_by_name[match[2]] if $colors_by_name[match[2]]
     end
 
     line.match(/@import\s+['"](.+)['"];/) do |match|
-      fname = "#{$app_root}#{match[1]}#{$suffix}"
-      if fname["*"]
-        fz = Dir.glob(fname)
-        fz.each do |fzf|
-          $imports << fzf unless $included_files.include? fzf
-          $included_files << fzf #this is a set
-        end
-      else
-        $imports << fname unless $included_files.include? fname
-        $included_files << fname #this is a set
+      fname = "#{$app_root}**/#{match[1]}#{$suffix}"
+      fname2 = match[1].split("/").last == "*" ? nil :  "_#{match[1].split("/").last}"
+      fname2 = "#{$app_root}**/#{fname2}#{$suffix}" if fname2
+      fz = Dir.glob(fname)
+      fz += Dir.glob(fname2) if fname2
+      fz.each do |fzf|
+        $imports << fzf unless $included_files.include? fzf
+        $included_files << fzf #this is a set
       end
     end
   end
@@ -375,5 +410,6 @@ while $imports.length > 0
 end
 
 # OUTPUT IN FORMAT:
-# color_name:actual_rgb:xterm_approximation:foreground_color
-puts $colors.map{|k, v| "#{k}:#{v}"}
+# name:guibg:ctermbg:guifg:ctermfg:rgb
+puts $colors_by_name.map{|k, v| "#{k}:#{v}"}
+puts $colors
