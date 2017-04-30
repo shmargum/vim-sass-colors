@@ -290,7 +290,6 @@ else
   $app_root = current_dir+"/"
 end
 
-$imports = []
 $included_files = Set.new
 $colors = []
 $colors_by_name = {}
@@ -380,7 +379,6 @@ def process_file thing
       fz += Dir.glob(fname2) if fname2
       fz.each do |fzf|
         process_file(fzf) unless $included_files.include? fzf
-        #$imports << fzf unless $included_files.include? fzf
         $included_files << fzf #this is a set
       end
     end
@@ -388,30 +386,6 @@ def process_file thing
 end
 
 process_file(current_file)
-
-while $imports.length > 0
-  thing = $imports[0]
-  fs = nil
-  begin
-    fs = File.open(thing);
-  rescue
-  end
-  if fs
-    process_file(fs)
-  else
-    things = thing.split("/")
-    things.last.prepend("_")
-    newthing = things.join("/")
-    begin
-      fs = File.open(newthing);
-    rescue
-    end
-    if fs
-      process_file(fs)
-    end
-  end
-  $imports.shift
-end
 
 # OUTPUT IN FORMAT:
 # name:guibg:ctermbg:guifg:ctermfg:rgb
