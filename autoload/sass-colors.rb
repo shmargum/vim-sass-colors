@@ -387,6 +387,17 @@ def process_file thing
   end
 end
 
+# look for a colors definitions file regardless if it is included
+colors_file_name = "#{$app_root}**/colors#{$suffix}"
+colors_file_name2 = "#{$app_root}**/_colors#{$suffix}"
+cfs = Dir.glob(colors_file_name) + Dir.glob(colors_file_name2)
+cfs.each do |cf|
+  unless $included_files.include? cf
+    $included_files << cf
+    process_file(cf)
+  end
+end
+
 process_file(current_file)
 
 # OUTPUT IN FORMAT:
