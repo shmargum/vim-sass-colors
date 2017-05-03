@@ -388,17 +388,24 @@ def process_file thing
 end
 
 # look for a colors definitions file regardless if it is included
-colors_file_name = "#{$app_root}**/colors#{$suffix}"
-colors_file_name2 = "#{$app_root}**/_colors#{$suffix}"
-cfs = Dir.glob(colors_file_name) + Dir.glob(colors_file_name2)
-cfs.each do |cf|
-  unless $included_files.include? cf
-    $included_files << cf
-    process_file(cf)
+# only do this if this is within a known sass/scss/stylesheets directory otherwise we may look too much
+if style_root_key
+  colors_file_name = "#{$app_root}**/colors#{$suffix}"
+  colors_file_name2 = "#{$app_root}**/_colors#{$suffix}"
+  cfs = Dir.glob(colors_file_name) + Dir.glob(colors_file_name2)
+  cfs.each do |cf|
+    unless $included_files.include? cf
+      $included_files << cf
+      process_file(cf)
+    end
   end
 end
 
-process_file(current_file)
+# finally process the file that was opened
+if File.exist?(current_file) && !$included_files.include?(current_file)
+  $included_files << current_file
+  process_file(current_file)
+end
 
 # OUTPUT IN FORMAT:
 # name:guibg:ctermbg:guifg:ctermfg:rgb

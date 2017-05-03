@@ -1,6 +1,5 @@
-if exists("b:did_ftplugin")
+if exists("b:did_vim_sass_colors")
   finish
 endif
-let b:did_ftplugin = 1
-call vim_sass_colors#run()
-autocmd BufWritePost * call vim_sass_colors#run()
+let b:did_vim_sass_colors = 1
+call vim_sass_colors#init()
