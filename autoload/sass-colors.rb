@@ -321,11 +321,11 @@ def is_bright? color
   (r1.to_i(16)*30 + g1.to_i(16)*59 + b1.to_i(16)*11) > 12000
 end
 def rgb2hex r, g, b
-  "#{r.to_i.to_s(16)}#{g.to_i.to_s(16)}#{b.to_i.to_s(16)}"
+  "#{r.to_i.to_s(16).rjust(2, '0')}#{g.to_i.to_s(16).rjust(2, '0')}#{b.to_i.to_s(16).rjust(2, '0')}"
 end
 def hex2rgb hex
   r, g, b = hex.scan(/.{2}/)
-  "rgb(#{r.to_i(16)},\\s*#{g.to_i(16)},\\s*#{b.to_i(16)})"
+  "rgba\\?(#{r.to_i(16)},\\s*#{g.to_i(16)},\\s*#{b.to_i(16)}\\(,\\s*[0-9.]\\+\\)\\?)"
 end
 def colors_for_hex guibg
   xt = approximate_color(guibg)
@@ -352,13 +352,13 @@ def process_file thing
         $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
       end
     end
-    line.match(/\$([\w\-]+)\s*:\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)/) do |match|
+    line.match(/\$([\w\-]+)\s*:\s*rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d\.]+)?\)/) do |match|
       guibg = rgb2hex(*match[2..4])
       xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
       $defined_color_hex << guibg
       $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
     end
-    line.scan(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/) do |match|
+    line.scan(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d\.]+)?\)/) do |match|
       guibg = rgb2hex(*match[0..2])
       unless $defined_color_hex.include? guibg
         xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
