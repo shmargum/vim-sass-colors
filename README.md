@@ -37,6 +37,7 @@ There are several plugins out there that can highlight color literals, but for m
 * Highlights $sass-variables that are assigned another $sass-variable that is a color
 * Automatically looks for a default color definition file to include if the current file is within a stylesheets directory
 * Automatically parses and looks for imports (using globbing) relative to a stylesheet directory if the current file is within one, or relative to the folder the current file is in otherwise
+* Looks for files with and without leading underscore `_`
 
 ### Definitions, constants, and options
 * Default stylesheet directories: `/scss/`, `/sass/`, `/stylesheets/`
