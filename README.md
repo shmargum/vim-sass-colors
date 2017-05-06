@@ -38,6 +38,7 @@ There are several plugins out there that can highlight color literals, but for m
 * Automatically looks for a default color definition file to include if the current file is within a stylesheets directory
 * Automatically parses and looks for imports (using globbing) relative to a stylesheet directory if the current file is within one, or relative to the folder the current file is in otherwise
 * Looks for files with and without leading underscore `_`
+* Is only loaded for .scss or .sass files
 
 ### Definitions, constants, and options
 * Default stylesheet directories: `/scss/`, `/sass/`, `/stylesheets/`
