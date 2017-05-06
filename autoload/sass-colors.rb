@@ -270,11 +270,11 @@ CLUT = [  # color look-up table
   ['255', 'eeeeee'],
 ]
 
-CLUT_INVERSE = {}
+CLUT_HASH = {}
 CLUT.each do |v|
-  CLUT_INVERSE[v[1]] = v[0]
+  CLUT_HASH[v[1]] = v[0]
 end
-HEX_VALS = CLUT_INVERSE.keys
+HEX_VALS = CLUT_HASH.keys
 
 
 prefix_regex = /\/(?:stylesheets|sass|scss)\//
@@ -313,20 +313,26 @@ def approximate_color color
       closest = c
     end
   end
-  CLUT_INVERSE[closest]
+  CLUT_HASH[closest]
 end
 
+# borrowed from https://github.com/ap/vim-css-color/blob/master/autoload/css_color.vim#L165
 def is_bright? color
   r1, g1, b1 = color.scan(/.{2}/)
   (r1.to_i(16)*30 + g1.to_i(16)*59 + b1.to_i(16)*11) > 12000
 end
+# transforms r, g, b strings into a hex value (no leading #)
 def rgb2hex r, g, b
   "#{r.to_i.to_s(16).rjust(2, '0')}#{g.to_i.to_s(16).rjust(2, '0')}#{b.to_i.to_s(16).rjust(2, '0')}"
 end
+# transforms a hex string (no leading #) into a rgb(a) regex
+# # TODO maybe get rgba its own color and stuff
 def hex2rgb hex
   r, g, b = hex.scan(/.{2}/)
   "rgba\\?(#{r.to_i(16)},\\s*#{g.to_i(16)},\\s*#{b.to_i(16)}\\(,\\s*[0-9.]\\+\\)\\?)"
 end
+# returns an array of values for our vim script to use
+# format is: [ctermbg, guifg, ctermfg, rgb(a)(regex)]
 def colors_for_hex guibg
   xt = approximate_color(guibg)
   fgc = is_bright?(guibg) ? "000000" : "ffffff"
@@ -335,6 +341,7 @@ def colors_for_hex guibg
   [xt, fgc, xtfgc, rgb]
 end
 
+# handle all imports recursively and load all defined colors and color variables for highlighting
 def process_file thing
   file_string = File.open(thing);
   file_string.each_line do |line|
@@ -408,6 +415,6 @@ if File.exist?(current_file) && !$included_files.include?(current_file)
 end
 
 # OUTPUT IN FORMAT:
-# name:guibg:ctermbg:guifg:ctermfg:rgb
+# name:guibg:ctermbg:guifg:ctermfg:rgb(a)(regex)
 puts $colors_by_name.map{|k, v| "#{k}:#{v}"}
 puts $colors

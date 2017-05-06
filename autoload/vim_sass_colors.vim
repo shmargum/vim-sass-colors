@@ -1,5 +1,4 @@
-" enable 24 bit colors if available
-
+" get path of script, ruby file is in the same dir
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 function! vim_sass_colors#init()
@@ -8,6 +7,7 @@ function! vim_sass_colors#init()
 endfunction
 
 function! vim_sass_colors#run()
+  " enable 24 bit colors if available
   if has("termguicolors")
     set termguicolors
   endif
@@ -16,7 +16,7 @@ function! vim_sass_colors#run()
   let b:cout = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
 
   " loop over all output in format: 
-  " name:guibg:ctermbg:guifg:ctermfg:rgb
+  " name:guibg:ctermbg:guifg:ctermfg:rgb(a)(regex)
   " rgb already comes in regex format so we don't have to worry about spaces
   let b:carr = split(b:cout)
   for b:cline in b:carr
