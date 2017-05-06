@@ -55,11 +55,11 @@ There are several plugins out there that can highlight color literals, but for m
 * Maybe port ruby to vimscript
 
 ### Notes
-24-bit colors
+* 24-bit colors
   * To get true 24-bit colors you should use a flavor of vim that supports the `termguicolors` option
   * This option is available in iTerm2 and neovim (at least)
   * Switching over for the first time may change your color scheme, though I just added 3 lines to my .vimrc to set 3 24 bit highlight groups to their former 256 xterm color value
-256 colors
+* 256 colors
   * If you do not have 24 bit color support enabled in your vim the highlight colors will fallback to a 256 color approximation
   * This approximation is based on the sum of the squared differences between each r, g, and b value
 
