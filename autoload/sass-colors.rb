@@ -278,10 +278,11 @@ HEX_VALS = CLUT_HASH.keys
 
 
 prefix_regex = /\/(?:stylesheets|sass|scss)\//
-suffix_regex = /\.(?:scss|sass|less)/
+# suffix_regex = /\.(?:scss|sass|less)/
 
 current_file = ARGV[0]
-$suffix = current_file[suffix_regex]
+#$suffix = current_file[suffix_regex]
+$suffix = ".*"
 current_dir = ARGV[0].sub(/\/[^\/]+$/,'')
 style_root_key = current_file[prefix_regex]
 if style_root_key
@@ -345,7 +346,7 @@ end
 def process_file thing
   file_string = File.open(thing);
   file_string.each_line do |line|
-    line.match(/\$([\w\-]+)\s*:\s*#(\h{6});/) do |match|
+    line.match(/\$([\w\-]+)\s*:\s*#(\h{6})/) do |match|
       guibg = match[2].downcase
       xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
       $defined_color_hex << guibg
@@ -374,16 +375,48 @@ def process_file thing
       end
     end
 
-    line.match(/\$([\w\-]+):\s*\$([\w\-]+);/) do |match|
+    line.match(/\$([\w\-]+):\s*\$([\w\-]+)/) do |match|
       $colors_by_name[match[1]] = $colors_by_name[match[2]] if $colors_by_name[match[2]]
     end
 
-    line.match(/@import\s+['"](.+)['"];/) do |match|
+    line.match(/@import\s+['"]?([^'";\s]+)['"]?/) do |match|
       fname = "#{$app_root}**/#{match[1]}#{$suffix}"
       fname2 = match[1].split("/").last == "*" ? nil :  "_#{match[1].split("/").last}"
+      fname2 = match[1].split("/").length > 1 ? (match[1].split("/")[0...-1] + [fname2]).join("/") : fname2
       fname2 = "#{$app_root}**/#{fname2}#{$suffix}" if fname2
+
+      fname3 = match[1].start_with?("../") ? "#{$app_root}**#{match[1].gsub("../","/")}#{$suffix}" : nil
+      fname4 = fname2 && fname3 ? fname2.gsub("../", "/") : nil
+      fname5 = match[1].gsub("../","/")
+      fname6 = nil
+      i = fname5.length
+      while i >= 0
+        i -= 1
+        if $app_root[fname5[0..i]]
+          fname5 = "#{$app_root}#{fname5[i...fname5.length]}#{$suffix}"
+          fname6 = fname5.split("/")
+          fname6 = (fname6[0...-1] + ["_#{fname6.last}"]).join("/")
+          i = -1
+        end
+      end
       fz = Dir.glob(fname)
       fz += Dir.glob(fname2) if fname2
+      fz += Dir.glob(fname3) if fname3
+      fz += Dir.glob(fname4) if fname4
+      fz += Dir.glob(fname5) if fname5
+      fz += Dir.glob(fname6) if fname6
+
+      in_loop = true
+      dot_dot = "../"
+      while fz.compact.length == 0 && match[1].start_with?("../") && in_loop
+        fname7 = "#{$app_root}#{dot_dot}#{match[1]}#{$suffix}"
+        fname8 = fname7.split("/")
+        fname8 = (fname8[0...-1] + ["_#{fname8.last}"]).join("/")
+        fz += Dir.glob(fname7)
+        fz += Dir.glob(fname8)
+        dot_dot += "../"
+        in_loop = false if (dot_dot.scan("/").size >= $app_root.scan("/").size)
+      end
       fz.each do |fzf|
         unless $included_files.include? fzf
           $included_files << fzf

@@ -37,12 +37,14 @@ There are several plugins out there that can highlight color literals, but for m
 * Highlights $sass-variables that are assigned another $sass-variable that is a color
 * Automatically looks for a default color definition file to include if the current file is within a stylesheets directory
 * Automatically parses and looks for imports (using globbing) relative to a stylesheet directory if the current file is within one, or relative to the folder the current file is in otherwise
+* Imports work with any suffix (so you can import .scss files from a .sass file)
+* If the import starts with `../` we will prepend `../` as many times as needed until we find a file or reach the system root
 * Looks for files with and without leading underscore `_`
 * Is only loaded for .scss or .sass files
 
 ### Definitions, constants, and options
 * Default stylesheet directories: `/scss/`, `/sass/`, `/stylesheets/`
-* Default color imports: `colors` or `_colors` (.scss or .sass)
+* Default color imports: `colors` or `_colors` (any suffix)
 * Default color palette: 24 bits, 256 color (approximation) fallback
 * Supported color formats: 6 digit hex, rgb, rgba
 * Disable by adding `autocmd BufReadPre,BufNewFile * let b:did_vim_sass_colors = 1` to your .vimrc before the `filetype plugin on` line.
@@ -52,6 +54,7 @@ There are several plugins out there that can highlight color literals, but for m
 * Add support for hsl, hsla, 3 digit hex, maybe other formats
 * Add option to specify alternative default color file import
 * Add option to specify directory imports
+* More robust imports
 * Maybe add option to exclude certian import paths
 * Maybe port ruby to vimscript
 
