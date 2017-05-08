@@ -2,34 +2,40 @@
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 function! vim_sass_colors#init()
+  " enable 24 bit colors if available
+  if has("termguicolors")
+    "set termguicolors
+  endif
+
+  " run once on load and on save
   call vim_sass_colors#run()
   autocmd BufWritePost * call vim_sass_colors#run()
 endfunction
 
 function! vim_sass_colors#run()
-  " enable 24 bit colors if available
-  if has("termguicolors")
-    set termguicolors
-  endif
-
   " run ruby script to parse sass color imports
-  let b:cout = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
+  " argument is the absolute sass filename
+  let l:ruby_output = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
 
   " loop over all output in format: 
   " name:guibg:ctermbg:guifg:ctermfg:rgb(a)(regex)
   " rgb already comes in regex format so we don't have to worry about spaces
-  let b:carr = split(b:cout)
-  for b:cline in b:carr
-    let b:cvar = split(b:cline, ':')
-    let b:g = 'SASS' . b:cvar[1]
+  let l:colors = split(l:ruby_output)
+  for l:color_string in l:colors
+    let [l:cname, l:guibg, l:ctermbg, l:guifg, l:ctermfg, l:rgb] = split(l:color_string, ':')
+    let l:group = 'SASS' . l:guibg
 
-    exe  'hi ' . b:g . ' ctermbg=' . b:cvar[2] . ' guibg=#' . b:cvar[1] . ' guifg=#' . b:cvar[3] . ' ctermfg=' . b:cvar[4]
-    " check for colors with no $variables
-    if b:cvar[0] != 'placeholdervar'
-      let b:m1 = matchadd(b:g, '$'.b:cvar[0])
+    " create highlight group
+    exe  'hi ' . l:group . ' ctermbg=' . l:ctermbg . ' guibg=#' . l:guibg . ' guifg=#' . l:guifg . ' ctermfg=' . l:ctermfg
+
+    " add $variable name to group, check for colors with no $variables
+    if l:cname != 'placeholdervar'
+      let l:m1 = matchadd(l:group, '$'.l:cname)
     end
-    let b:m2 = matchadd(b:g, '\c#'.b:cvar[1])
-    let b:m3 = matchadd(b:g, b:cvar[5])
+    " add 6 digit hex match to group, case-insensitive
+    let l:m2 = matchadd(l:group, '\c#'.l:guibg)
+    " add rgb regex match to group
+    let l:m3 = matchadd(l:group, l:rgb)
   endfor
 
 endfunction
