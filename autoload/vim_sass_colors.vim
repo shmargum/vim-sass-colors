@@ -4,7 +4,7 @@ let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 function! vim_sass_colors#init()
   " enable 24 bit colors if available
   if has("termguicolors")
-    "set termguicolors
+    set termguicolors
   endif
 
   " run once on load and on save
