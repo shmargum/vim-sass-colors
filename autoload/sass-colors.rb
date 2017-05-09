@@ -342,9 +342,70 @@ def colors_for_hex guibg
   [xt, fgc, xtfgc, rgb]
 end
 
+# helper to prepend an underscore to the last part of a file path
+def prepend_underscore name
+  parts = name.split("/")
+  parts.length > 1 ? (parts[0...-1] + ["_#{parts.last}"]).join("/") : "_#{parts.last}"
+end
+
+##################
+## IMPORT LOGIC ##
+##################
+# logic to find a file import(s) by name
+# Matches any suffix TODO: Filter to only .scss or .sass suffixes (glob doesn't do regex...)
+# Looks for filename with and without underscore prefix (unless the include is a *)
+# The app root is defined as either the directory with the name of 'stylesheets','sass','scss'
+#   that is a parent of the file you are editing, or the directory of the file itself
+#############################################################################################
+def find_files name
+  names = name.split("/").last == "*" ? [name] : [name, prepend_underscore(name)]
+  files = []
+  paths = []
+  names.each do |target|
+    # First, just look for the file
+    paths << "#{$app_root}/#{target}#{$suffix}".squeeze("/")
+
+    # Next, check the app root with /**/ + file name
+    paths << "#{$app_root}/**/#{target}#{$suffix}".squeeze("/")
+
+    # Next, we check for the same, but we replace ../ with / in file name (if present)
+    if target.start_with?("../")
+      paths << "#{$app_root}/**/#{target.gsub("../","/")}#{$suffix}".squeeze("/")
+    end
+
+    # Next, we check to see if the determined app root shares a part of the path like /root/my/app/src/ and ./app/src/component
+    #   and we look for /root/my/app/src/component.*
+    i = target.length
+    while i > 0
+      i -= 1
+      if $app_root.end_with?(target[0..i])
+        paths << "#{$app_root}#{target[i...target.length]}#{$suffix}".squeeze("/")
+        i = -1 # break while
+      end
+    end
+
+  end
+  files += paths.map{|p| Dir.glob(p)}.flatten.compact
+
+  # Next, if we still haven't found a matching file, and the filename starts with ../ we will prepend ../ in a loop until
+  #   we either find a matching file or reach the file system root
+  names.each do |target|
+    in_loop = true
+    dot_dot = "../"
+    while files.length == 0 && target.start_with?("../") && in_loop
+      path = "#{$app_root}#{dot_dot}#{target.gsub("../","/")}#{$suffix}".squeeze("/")
+      files += Dir.glob(path)
+      dot_dot += "../"
+      in_loop = false if (dot_dot.scan("/").size >= $app_root.scan("/").size)
+    end
+  end
+
+  files
+end
+
 # handle all imports recursively and load all defined colors and color variables for highlighting
-def process_file thing
-  file_string = File.open(thing);
+def process_file file_name 
+  file_string = File.open(file_name);
   file_string.each_line do |line|
     line.match(/\$([\w\-]+)\s*:\s*#(\h{6})/) do |match|
       guibg = match[2].downcase
@@ -380,47 +441,10 @@ def process_file thing
     end
 
     line.match(/@import\s+['"]?([^'";\s]+)['"]?/) do |match|
-      fname = "#{$app_root}**/#{match[1]}#{$suffix}"
-      fname2 = match[1].split("/").last == "*" ? nil :  "_#{match[1].split("/").last}"
-      fname2 = match[1].split("/").length > 1 ? (match[1].split("/")[0...-1] + [fname2]).join("/") : fname2
-      fname2 = "#{$app_root}**/#{fname2}#{$suffix}" if fname2
-
-      fname3 = match[1].start_with?("../") ? "#{$app_root}**#{match[1].gsub("../","/")}#{$suffix}" : nil
-      fname4 = fname2 && fname3 ? fname2.gsub("../", "/") : nil
-      fname5 = match[1].gsub("../","/")
-      fname6 = nil
-      i = fname5.length
-      while i >= 0
-        i -= 1
-        if $app_root[fname5[0..i]]
-          fname5 = "#{$app_root}#{fname5[i...fname5.length]}#{$suffix}"
-          fname6 = fname5.split("/")
-          fname6 = (fname6[0...-1] + ["_#{fname6.last}"]).join("/")
-          i = -1
-        end
-      end
-      fz = Dir.glob(fname)
-      fz += Dir.glob(fname2) if fname2
-      fz += Dir.glob(fname3) if fname3
-      fz += Dir.glob(fname4) if fname4
-      fz += Dir.glob(fname5) if fname5
-      fz += Dir.glob(fname6) if fname6
-
-      in_loop = true
-      dot_dot = "../"
-      while fz.compact.length == 0 && match[1].start_with?("../") && in_loop
-        fname7 = "#{$app_root}#{dot_dot}#{match[1]}#{$suffix}"
-        fname8 = fname7.split("/")
-        fname8 = (fname8[0...-1] + ["_#{fname8.last}"]).join("/")
-        fz += Dir.glob(fname7)
-        fz += Dir.glob(fname8)
-        dot_dot += "../"
-        in_loop = false if (dot_dot.scan("/").size >= $app_root.scan("/").size)
-      end
-      fz.each do |fzf|
-        unless $included_files.include? fzf
-          $included_files << fzf
-          process_file(fzf)
+      find_files(match[1]).each do |file|
+        unless $included_files.include? file
+          $included_files << file
+          process_file(file)
         end
       end
     end
@@ -430,13 +454,10 @@ end
 # look for a colors definitions file regardless if it is included
 # only do this if this is within a known sass/scss/stylesheets directory otherwise we may look too much
 if style_root_key
-  colors_file_name = "#{$app_root}**/colors#{$suffix}"
-  colors_file_name2 = "#{$app_root}**/_colors#{$suffix}"
-  cfs = Dir.glob(colors_file_name) + Dir.glob(colors_file_name2)
-  cfs.each do |cf|
-    unless $included_files.include? cf
-      $included_files << cf
-      process_file(cf)
+  find_files("colors").each do |file|
+    unless $included_files.include? file
+      $included_files << file
+      process_file(file)
     end
   end
 end
