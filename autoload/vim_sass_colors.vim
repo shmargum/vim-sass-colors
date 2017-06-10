@@ -13,6 +13,7 @@ function! vim_sass_colors#init()
 endfunction
 
 function! vim_sass_colors#run()
+  call clearmatches()
   " run ruby script to parse sass color imports
   " argument is the absolute sass filename
   let l:ruby_output = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
@@ -25,17 +26,19 @@ function! vim_sass_colors#run()
     let [l:cname, l:guibg, l:ctermbg, l:guifg, l:ctermfg, l:rgb] = split(l:color_string, ':')
     let l:group = 'SASS' . l:guibg
 
-    " create highlight group
-    exe  'hi ' . l:group . ' ctermbg=' . l:ctermbg . ' guibg=#' . l:guibg . ' guifg=#' . l:guifg . ' ctermfg=' . l:ctermfg
+    if hlexists(l:group) == 0
+      " create highlight group if it doesn't exist
+      exe  'hi ' . l:group . ' ctermbg=' . l:ctermbg . ' guibg=#' . l:guibg . ' guifg=#' . l:guifg . ' ctermfg=' . l:ctermfg
+      " add 6 digit hex match to group, case-insensitive
+      call matchadd(l:group, '\c#'.l:guibg)
+      " add rgb regex match to group
+      call matchadd(l:group, l:rgb)
+    endif
 
-    " add $variable name to group, check for colors with no $variables
+    " only add $variable name to group
     if l:cname != 'placeholdervar'
-      let l:m1 = matchadd(l:group, '$'.l:cname)
+      call matchadd(l:group, '$'.l:cname)
     end
-    " add 6 digit hex match to group, case-insensitive
-    let l:m2 = matchadd(l:group, '\c#'.l:guibg)
-    " add rgb regex match to group
-    let l:m3 = matchadd(l:group, l:rgb)
   endfor
 
 endfunction
