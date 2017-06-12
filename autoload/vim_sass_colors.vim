@@ -1,5 +1,6 @@
 " get path of script, ruby file is in the same dir
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+let b:matches = []
 
 function! vim_sass_colors#init()
   " enable 24 bit colors if available
@@ -13,7 +14,11 @@ function! vim_sass_colors#init()
 endfunction
 
 function! vim_sass_colors#run()
-  call clearmatches()
+  " clear old color variable names so we can reassign if needed on save
+  for l:old_match in b:matches
+    call matchdelete(l:old_match)
+  endfor
+  let b:matches = []
   " run ruby script to parse sass color imports
   " argument is the absolute sass filename
   let l:ruby_output = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
@@ -36,9 +41,10 @@ function! vim_sass_colors#run()
     endif
 
     " only add $variable name to group
-    if l:cname != 'placeholdervar'
-      call matchadd(l:group, '$'.l:cname)
-    end
+    if l:cname != 'placeholder'
+      let l:new_match =  matchadd(l:group, '$'.l:cname)
+      call add(b:matches, l:new_match)
+    endif
   endfor
 
 endfunction
