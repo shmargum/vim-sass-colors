@@ -1,8 +1,8 @@
 " get path of script, ruby file is in the same dir
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
-let b:matches = []
 
 function! vim_sass_colors#init()
+  let b:matches = []
   " enable 24 bit colors if available
   if has("termguicolors")
     set termguicolors
