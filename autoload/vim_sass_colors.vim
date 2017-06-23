@@ -2,23 +2,28 @@
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 function! vim_sass_colors#init()
-  let b:matches = []
   " enable 24 bit colors if available
   if has("termguicolors")
     set termguicolors
   endif
 
-  " run once on load and on save
+  " run once on load and on save and reading new buffers
   call vim_sass_colors#run()
-  autocmd BufWritePost * call vim_sass_colors#run()
+  autocmd BufWritePost * call vim_sass_colors#write()
+  autocmd BufReadPost * call vim_sass_colors#run()
 endfunction
 
-function! vim_sass_colors#run()
-  " clear old color variable names so we can reassign if needed on save
-  for l:old_match in b:matches
+" clear old color variable names so we can reassign if needed on save
+function! vim_sass_colors#write()
+  for l:old_match in b:vim_sass_color_matches
     call matchdelete(l:old_match)
   endfor
-  let b:matches = []
+  call vim_sass_colors#run()
+endfunction
+
+" run ruby script and highlight things
+function! vim_sass_colors#run()
+  let b:vim_sass_color_matches = []
   " run ruby script to parse sass color imports
   " argument is the absolute sass filename
   let l:ruby_output = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
@@ -43,7 +48,7 @@ function! vim_sass_colors#run()
     " only add $variable name to group
     if l:cname != 'placeholder'
       let l:new_match =  matchadd(l:group, '$'.l:cname)
-      call add(b:matches, l:new_match)
+      call add(b:vim_sass_color_matches, l:new_match)
     endif
   endfor
 
