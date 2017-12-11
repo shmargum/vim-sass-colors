@@ -278,11 +278,11 @@ HEX_VALS = CLUT_HASH.keys
 
 
 prefix_regex = /\/(?:stylesheets|sass|scss)\//
-# suffix_regex = /\.(?:scss|sass|less)/
+suffix_regex = /\.(?:scss|sass|less)/
 
 current_file = ARGV[0]
-#$suffix = current_file[suffix_regex]
-$suffix = ".*"
+$suffix = current_file[suffix_regex]
+# $suffix = ".*"
 current_dir = ARGV[0].sub(/\/[^\/]+$/,'')
 style_root_key = current_file[prefix_regex]
 if style_root_key
