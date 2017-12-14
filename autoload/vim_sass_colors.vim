@@ -11,11 +11,15 @@ function! vim_sass_colors#init()
   call vim_sass_colors#run()
   autocmd BufWritePost * call vim_sass_colors#write()
   autocmd BufReadPost * call vim_sass_colors#run()
+
+  " autocmd that will set up the w:created variable
+  autocmd VimEnter * autocmd WinEnter * let w:created=1
+  autocmd WinEnter * if !exists('w:created') | call vim_sass_colors#run() | endif
 endfunction
 
 " clear old color variable names so we can reassign if needed on save
 function! vim_sass_colors#write()
-  for l:old_match in b:vim_sass_color_matches
+  for l:old_match in w:vim_sass_color_matches
     call matchdelete(l:old_match)
   endfor
   call vim_sass_colors#run()
@@ -23,7 +27,7 @@ endfunction
 
 " run ruby script and highlight things
 function! vim_sass_colors#run()
-  let b:vim_sass_color_matches = []
+  let w:vim_sass_color_matches = []
   " run ruby script to parse sass color imports
   " argument is the absolute sass filename
   let l:ruby_output = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
@@ -47,8 +51,10 @@ function! vim_sass_colors#run()
 
     " only add $variable name to group
     if l:cname != 'placeholder'
-      let l:new_match =  matchadd(l:group, '$'.l:cname)
-      call add(b:vim_sass_color_matches, l:new_match)
+      let l:new_match =  matchadd(l:group, '\v\$'.l:cname.'([^a-zA-Z0-9-_])@=')
+      let l:new_match2 =  matchadd(l:group, '\v\$'.l:cname.'($)@=')
+      call add(w:vim_sass_color_matches, l:new_match)
+      call add(w:vim_sass_color_matches, l:new_match2)
     endif
   endfor
 
