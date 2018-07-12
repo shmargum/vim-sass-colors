@@ -43,7 +43,7 @@ There are several plugins out there that can highlight color literals, but for m
 * Is only loaded for .scss or .sass files
 
 ### Definitions, constants, and options
-* Default stylesheet directories: `/scss/`, `/sass/`, `/stylesheets/`
+* Default stylesheet directories: `/scss/`, `/sass/`, `/stylesheets/`, `/style/`, `/styles/`
 * Default color imports: `colors` or `_colors` (any suffix)
 * Default color palette: 24 bits, 256 color (approximation) fallback
 * Supported color formats: 6 digit hex, rgb, rgba
