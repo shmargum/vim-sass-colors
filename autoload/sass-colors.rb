@@ -277,7 +277,7 @@ end
 HEX_VALS = CLUT_HASH.keys
 
 
-prefix_regex = /\/(?:stylesheets|sass|scss)\//
+prefix_regex = /\/(?:stylesheets|sass|scss|style|styles)\//
 suffix_regex = /\.(?:scss|sass|less)/
 
 current_file = ARGV[0]
