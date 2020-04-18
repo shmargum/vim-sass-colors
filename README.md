@@ -35,6 +35,7 @@ This plugin uses ruby
 * `VIM_SASS_COLORS_BASE_FILES`
   * Set the default/base file to automatically import
   * default: `colors,variables`
+
 Example in .zshrc (or .bashrc)
 ```bash
 export VIM_SASS_COLORS_BASE_FILES="colors,variables,custom-file-name"
