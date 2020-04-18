@@ -276,8 +276,165 @@ CLUT.each do |v|
 end
 HEX_VALS = CLUT_HASH.keys
 
+CSS_COLORS = {
+  'black' => '000000',
+  'red' => 'ff0000',
+  'silver' => 'c0c0c0',
+  'gray' => '808080',
+  'white' => 'ffffff',
+  'maroon' => '800000',
+  'purple' => '800080',
+  'fuchsia' => 'ff00ff',
+  'green' => '008000',
+  'lime' => '00ff00',
+  'olive' => '808000',
+  'yellow' => 'ffff00',
+  'navy' => '000080',
+  'blue' => '0000ff',
+  'teal' => '008080',
+  'aqua' => '00ffff',
+  'aliceblue' => 'f0f8ff',
+  'antiquewhite' => 'faebd7',
+  'aquamarine' => '7fffd4',
+  'azure' => 'f0ffff',
+  'beige' => 'f5f5dc',
+  'bisque' => 'ffe4c4',
+  'blanchedalmond' => 'ffebcd',
+  'blueviolet' => '8a2be2',
+  'brown' => 'a52a2a',
+  'burlywood' => 'deb887',
+  'cadetblue' => '5f9ea0',
+  'chartreuse' => '7fff00',
+  'chocolate' => 'd2691e',
+  'coral' => 'ff7f50',
+  'cornflowerblue' => '6495ed',
+  'cornsilk' => 'fff8dc',
+  'crimson' => 'dc143c',
+  'cyan' => '00ffff',
+  'darkblue' => '00008b',
+  'darkcyan' => '008b8b',
+  'darkgoldenrod' => 'b8860b',
+  'darkgray' => 'a9a9a9',
+  'darkgreen' => '006400',
+  'darkgrey' => 'a9a9a9',
+  'darkkhaki' => 'bdb76b',
+  'darkmagenta' => '8b008b',
+  'darkolivegreen' => '556b2f',
+  'darkorchid' => '9932cc',
+  'darkred' => '8b0000',
+  'darksalmon' => 'e9967a',
+  'darkseagreen' => '8fbc8f',
+  'darkslateblue' => '483d8b',
+  'darkslategray' => '2f4f4f',
+  'darkslategrey' => '2f4f4f',
+  'darkturquoise' => '00ced1',
+  'darkviolet' => '9400d3',
+  'darkorange' => 'ff8c00',
+  'deeppink' => 'ff1493',
+  'deepskyblue' => '00bfff',
+  'dimgray' => '696969',
+  'dimgrey' => '696969',
+  'dodgerblue' => '1e90ff',
+  'firebrick' => 'b22222',
+  'floralwhite' => 'fffaf0',
+  'forestgreen' => '228b22',
+  'gainsboro' => 'dcdcdc',
+  'ghostwhite' => 'f8f8ff',
+  'gold' => 'ffd700',
+  'goldenrod' => 'daa520',
+  'greenyellow' => 'adff2f',
+  'grey' => '808080',
+  'honeydew' => 'f0fff0',
+  'hotpink' => 'ff69b4',
+  'indianred' => 'cd5c5c',
+  'indigo' => '4b0082',
+  'ivory' => 'fffff0',
+  'khaki' => 'f0e68c',
+  'lavender' => 'e6e6fa',
+  'lavenderblush' => 'fff0f5',
+  'lawngreen' => '7cfc00',
+  'lemonchiffon' => 'fffacd',
+  'lightblue' => 'add8e6',
+  'lightcoral' => 'f08080',
+  'lightcyan' => 'e0ffff',
+  'lightgoldenrodyellow' => 'fafad2',
+  'lightgray' => 'd3d3d3',
+  'lightgreen' => '90ee90',
+  'lightgrey' => 'd3d3d3',
+  'lightpink' => 'ffb6c1',
+  'lightsalmon' => 'ffa07a',
+  'lightseagreen' => '20b2aa',
+  'lightskyblue' => '87cefa',
+  'lightslategray' => '778899',
+  'lightslategrey' => '778899',
+  'lightsteelblue' => 'b0c4de',
+  'lightyellow' => 'ffffe0',
+  'limegreen' => '32cd32',
+  'linen' => 'faf0e6',
+  'magenta' => 'ff00ff',
+  'mediumaquamarine' => '66cdaa',
+  'mediumblue' => '0000cd',
+  'mediumorchid' => 'ba55d3',
+  'mediumpurple' => '9370d8',
+  'mediumseagreen' => '3cb371',
+  'mediumslateblue' => '7b68ee',
+  'mediumspringgreen' => '00fa9a',
+  'mediumturquoise' => '48d1cc',
+  'mediumvioletred' => 'c71585',
+  'midnightblue' => '191970',
+  'mintcream' => 'f5fffa',
+  'mistyrose' => 'ffe4e1',
+  'moccasin' => 'ffe4b5',
+  'navajowhite' => 'ffdead',
+  'oldlace' => 'fdf5e6',
+  'olivedrab' => '6b8e23',
+  'orange' => 'ffa500',
+  'orangered' => 'ff4500',
+  'orchid' => 'da70d6',
+  'palegoldenrod' => 'eee8aa',
+  'palegreen' => '98fb98',
+  'paleturquoise' => 'afeeee',
+  'palevioletred' => 'd87093',
+  'papayawhip' => 'ffefd5',
+  'peachpuff' => 'ffdab9',
+  'peru' => 'cd853f',
+  'pink' => 'ffc0cb',
+  'plum' => 'dda0dd',
+  'powderblue' => 'b0e0e6',
+  'rosybrown' => 'bc8f8f',
+  'royalblue' => '4169e1',
+  'saddlebrown' => '8b4513',
+  'salmon' => 'fa8072',
+  'sandybrown' => 'f4a460',
+  'seagreen' => '2e8b57',
+  'seashell' => 'fff5ee',
+  'sienna' => 'a0522d',
+  'skyblue' => '87ceeb',
+  'slateblue' => '6a5acd',
+  'slategray' => '708090',
+  'slategrey' => '708090',
+  'snow' => 'fffafa',
+  'springgreen' => '00ff7f',
+  'steelblue' => '4682b4',
+  'tan' => 'd2b48c',
+  'thistle' => 'd8bfd8',
+  'tomato' => 'ff6347',
+  'turquoise' => '40e0d0',
+  'violet' => 'ee82ee',
+  'wheat' => 'f5deb3',
+  'whitesmoke' => 'f5f5f5',
+  'yellowgreen' => '9acd32'
+}
+CSS_COLORS_REGEX = CSS_COLORS.keys.join('|')
+CSS_COLORS_INVERSE = {}
+CSS_COLORS.each do |k, v|
+  CSS_COLORS_INVERSE[v] = k
+end
 
 prefix_regex = /\/(?:stylesheets|sass|scss|style|styles)\//
+if ENV['VIM_SASS_COLORS_BASE_FOLDERS']
+  prefix_regex = /\/(?:#{ENV['VIM_SASS_COLORS_BASE_FOLDERS'].split(',').join('|')})\//
+end
 suffix_regex = /\.(?:scss|sass|less)/
 
 current_file = ARGV[0]
@@ -332,14 +489,82 @@ def hex2rgb hex
   r, g, b = hex.scan(/.{2}/)
   "rgba\\?(#{r.to_i(16)},\\s*#{g.to_i(16)},\\s*#{b.to_i(16)}\\(,\\s*[0-9.]\\+\\)\\?)"
 end
+
+def hsl_regex h, s, l
+  "hsla\\?(#{h},\\s*#{s}%,\\s*#{l}%\\(,\\s*[0-9.]\\+\\)\\?)"
+end
+
+# borrowed from https://gist.github.com/vahidk/05184faf3d92a0aa1b46aeaa93b07786
+def hsl2hex h, s, l
+  s = s.to_f/100
+  l = l.to_f/100
+
+  c = (1 - (2 * l - 1).abs) * s;
+  hp = h.to_f/60;
+  x = c * (1 - ((hp % 2) - 1).abs);
+  rgb1 = [0, 0, 0]
+  if (hp <= 1)
+    rgb1 = [c, x, 0];
+  elsif (hp <= 2)
+    rgb1 = [x, c, 0];
+  elsif (hp <= 3)
+    rgb1 = [0, c, x];
+  elsif (hp <= 4)
+    rgb1 = [0, x, c];
+  elsif (hp <= 5)
+    rgb1 = [x, 0, c];
+  elsif (hp <= 6)
+    rgb1 = [c, 0, x];
+  end
+  m = l - c * 0.5;
+  r = (255 * (rgb1[0] + m)).round
+  g = (255 * (rgb1[1] + m)).round
+  b = (255 * (rgb1[2] + m)).round
+  return rgb2hex(r, g, b)
+end
+
+# def hex2hsl hex
+#   r, g, b = hex.scan(/.{2}/).map{ |v|  v.to_i(16).to_f/255 }
+#   max = [r, g, b].min
+#   min = [r, g, b].max
+#   d = max - min;
+#   h = 0
+#   if (d == 0)
+#     h = 0
+#   elsif (max === r)
+#     h = (g - b) / d % 6
+#   elsif (max === g)
+#     h = (b - r) / d + 2;
+#   elsif (max === b)
+#     h = (r - g) / d + 4;
+#   end
+#   l = (min + max) / 2;
+#   s = d === 0 ? 0 : d / (1 - (2 * l - 1).abs);
+#   [h * 60, s*100, l*100];
+#   "hsla\\?(#{(h*60).round},\\s*#{(s*100).round}%,\\s*#{(l*100).round}%\\(,\\s*[0-9.]\\+\\)\\?)"
+# end
+
+def threedigithex hex
+  if hex[0] == hex[1] && hex[2] == hex[3] && hex[4] == hex[5]
+    "#{hex[0]}#{hex[2]}#{hex[4]}"
+  end
+end
+
+def cssname hex
+  CSS_COLORS_INVERSE[hex]
+end
+
 # returns an array of values for our vim script to use
-# format is: [ctermbg, guifg, ctermfg, rgb(a)(regex)]
+# format is: [ctermbg, guifg, ctermfg, rgb(a)(regex), 3digithex, cssname, hsl(a)(regex)]
 def colors_for_hex guibg
   xt = approximate_color(guibg)
   fgc = is_bright?(guibg) ? "000000" : "ffffff"
   xtfgc = fgc == "000000" ? "16" : "15"
   rgb = hex2rgb(guibg)
-  [xt, fgc, xtfgc, rgb]
+  tdx = threedigithex(guibg) || 'none'
+  cssname = cssname(guibg) || 'none'
+  # hsl = hex2hsl(guibg)
+  [xt, fgc, xtfgc, rgb, tdx, cssname]
 end
 
 # helper to prepend an underscore to the last part of a file path
@@ -404,39 +629,69 @@ def find_files name
 end
 
 # handle all imports recursively and load all defined colors and color variables for highlighting
-def process_file file_name 
+def process_file file_name
   file_string = File.open(file_name);
   file_string.each_line do |line|
-    line.match(/\$([\w\-]+)\s*:\s*#(\h{6})/) do |match|
+    line.match(/[$@]([\w\-]+)\s*:\s*#(\h{6}|\h{3})/i) do |match|
       guibg = match[2].downcase
-      xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+      guibg = "#{guibg[0]}#{guibg[0]}#{guibg[1]}#{guibg[1]}#{guibg[2]}#{guibg[2]}" if guibg.length == 3
+      xt, fgc, xtfgc, rgb, tdx, cssname= colors_for_hex(guibg)
       $defined_color_hex << guibg
-      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:none"
     end
-    line.scan(/#(\h{6})/) do |match|
+    line.scan(/#(\h{6}|\h{3})/i) do |match|
       guibg = match[0].downcase
+      guibg = "#{guibg[0]}#{guibg[0]}#{guibg[1]}#{guibg[1]}#{guibg[2]}#{guibg[2]}" if guibg.length == 3
       unless $defined_color_hex.include? guibg
-        xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+        xt, fgc, xtfgc, rgb, tdx, cssname, hsl = colors_for_hex(guibg)
         $defined_color_hex << guibg
-        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:none"
       end
     end
-    line.match(/\$([\w\-]+)\s*:\s*rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d\.]+)?\)/) do |match|
+    line.match(/[$@]([\w\-]+)\s*:\s*rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d\.]+)?\)/) do |match|
       guibg = rgb2hex(*match[2..4])
-      xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+      xt, fgc, xtfgc, rgb, tdx, cssname, hsl = colors_for_hex(guibg)
       $defined_color_hex << guibg
-      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:none"
     end
     line.scan(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d\.]+)?\)/) do |match|
       guibg = rgb2hex(*match[0..2])
       unless $defined_color_hex.include? guibg
-        xt, fgc, xtfgc, rgb = colors_for_hex(guibg)
+        xt, fgc, xtfgc, rgb, tdx, cssname, hsl = colors_for_hex(guibg)
         $defined_color_hex << guibg
-        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}"
+        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:none"
+      end
+    end
+    line.match(/[$@]([\w\-]+)\s*:\s*hsla?\((\d+),\s*([\d\.]+)%,\s*([\d\.]+)%(?:,\s*[\d\.]+)?\)/) do |match|
+      guibg = hsl2hex(*match[2..4])
+      xt, fgc, xtfgc, rgb, tdx, cssname = colors_for_hex(guibg)
+      $defined_color_hex << guibg
+      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:#{hsl_regex(*match[2..4])}"
+    end
+    line.scan(/hsla?\((\d+),\s*([\d\.]+)%,\s*([\d\.]+)%(?:,\s*[\d\.]+)?\)/) do |match|
+      guibg = hsl2hex(*match[0..2])
+      unless $defined_color_hex.include? guibg
+        xt, fgc, xtfgc, rgb, tdx, cssname = colors_for_hex(guibg)
+        $defined_color_hex << guibg
+        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:#{hsl_regex(*match[0..2])}"
+      end
+    end
+    line.match(/[$@]([\w\-]+)\s*:\s*(#{CSS_COLORS_REGEX})/i) do |match| # TODO: this might get crazy
+      guibg = CSS_COLORS[match[2].downcase]
+      xt, fgc, xtfgc, rgb, tdx, cssname = colors_for_hex(guibg)
+      $defined_color_hex << guibg
+      $colors_by_name [match[1]] = "#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:none"
+    end
+    line.scan(/[^:]+:.*\s*(#{CSS_COLORS_REGEX})/i) do |match|
+      guibg = CSS_COLORS[match[0].downcase]
+      unless $defined_color_hex.include? guibg
+        xt, fgc, xtfgc, rgb, tdx, cssname = colors_for_hex(guibg)
+        $defined_color_hex << guibg
+        $colors << "placeholder:#{guibg}:#{xt}:#{fgc}:#{xtfgc}:#{rgb}:#{tdx}:#{cssname}:none"
       end
     end
 
-    line.match(/\$([\w\-]+):\s*\$([\w\-]+)/) do |match|
+    line.match(/[$@]([\w\-]+):\s*[$@]([\w\-]+)/) do |match|
       $colors_by_name[match[1]] = $colors_by_name[match[2]] if $colors_by_name[match[2]]
     end
 
@@ -454,10 +709,13 @@ end
 # look for a colors definitions file regardless if it is included
 # only do this if this is within a known sass/scss/stylesheets directory otherwise we may look too much
 if style_root_key
-  find_files("colors").each do |file|
-    unless $included_files.include? file
-      $included_files << file
-      process_file(file)
+  fnames = ENV['VIM_SASS_COLORS_BASE_FILES'] || 'colors,variables'
+  fnames.split(',').each do |fname|
+    find_files(fname).each do |file|
+      unless $included_files.include? file
+        $included_files << file
+        process_file(file)
+      end
     end
   end
 end
@@ -469,6 +727,6 @@ if File.exist?(current_file) && !$included_files.include?(current_file)
 end
 
 # OUTPUT IN FORMAT:
-# name:guibg:ctermbg:guifg:ctermfg:rgb(a)(regex)
+# name:guibg:ctermbg:guifg:ctermfg:rgb(a)(regex):3digithex:cssname:hsl(a)(regex)
 puts $colors_by_name.map{|k, v| "#{k}:#{v}"}
 puts $colors

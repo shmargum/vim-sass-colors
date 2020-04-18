@@ -32,12 +32,12 @@ function! vim_sass_colors#run()
   " argument is the absolute sass filename
   let l:ruby_output = system('ruby ' . s:path . '/sass-colors.rb ' . expand('%:p'))
 
-  " loop over all output in format: 
+  " loop over all output in format:
   " name:guibg:ctermbg:guifg:ctermfg:rgb(a)(regex)
   " rgb already comes in regex format so we don't have to worry about spaces
   let l:colors = split(l:ruby_output)
   for l:color_string in l:colors
-    let [l:cname, l:guibg, l:ctermbg, l:guifg, l:ctermfg, l:rgb] = split(l:color_string, ':')
+    let [l:cname, l:guibg, l:ctermbg, l:guifg, l:ctermfg, l:rgb, l:tdx, l:cssname, l:hsl] = split(l:color_string, ':')
     let l:group = 'SASS' . l:guibg
 
     if hlexists(l:group) == 0
@@ -47,6 +47,21 @@ function! vim_sass_colors#run()
       call matchadd(l:group, '\c#'.l:guibg)
       " add rgb regex match to group
       call matchadd(l:group, l:rgb)
+    endif
+
+    if l:tdx != 'none'
+      " add 3 digit hex match to group, case-insensitive
+      call matchadd(l:group, '\c\v#'.l:tdx.'\ze([^a-zA-Z0-9-_]|$)')
+    endif
+
+    if l:cssname != 'none'
+      " add css name digit, case-insensitive
+      call matchadd(l:group, '\c\v([^a-zA-Z0-9-_$])\zs'.l:cssname.'\ze([^a-zA-Z0-9-_]|$)')
+    endif
+
+    if l:hsl != 'none'
+      " add hsl regex match to group
+      call matchadd(l:group, l:hsl)
     endif
 
     " only add $variable name to group
