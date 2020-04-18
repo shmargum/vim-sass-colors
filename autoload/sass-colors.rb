@@ -494,20 +494,6 @@ def hsl_regex h, s, l
   "hsla\\?(#{h},\\s*#{s}%,\\s*#{l}%\\(,\\s*[0-9.]\\+\\)\\?)"
 end
 
-
-def hue2rgb q, p, t
-  t = t % 1
-  if t < (1/6.0)
-    p + ((q - p) * 6.0 * t)
-  elsif t < 0.5
-    q
-  elsif t < (2/3.0)
-    p + ((q - p) * 6.0 * (2/3.0 - t))
-  else
-    p
-  end
-end
-
 # borrowed from https://gist.github.com/vahidk/05184faf3d92a0aa1b46aeaa93b07786
 def hsl2hex h, s, l
   s = s.to_f/100
@@ -531,9 +517,9 @@ def hsl2hex h, s, l
     rgb1 = [c, 0, x];
   end
   m = l - c * 0.5;
-  r = (255 * (rgb1[0] + m)).to_i
-  g = (255 * (rgb1[1] + m)).to_i
-  b = (255 * (rgb1[2] + m)).to_i
+  r = (255 * (rgb1[0] + m)).round
+  g = (255 * (rgb1[1] + m)).round
+  b = (255 * (rgb1[2] + m)).round
   return rgb2hex(r, g, b)
 end
 
@@ -555,7 +541,7 @@ end
 #   l = (min + max) / 2;
 #   s = d === 0 ? 0 : d / (1 - (2 * l - 1).abs);
 #   [h * 60, s*100, l*100];
-#   "hsla\\?(#{(h*60).to_i},\\s*#{(s*100).to_i}%,\\s*#{(l*100).to_i}%\\(,\\s*[0-9.]\\+\\)\\?)"
+#   "hsla\\?(#{(h*60).round},\\s*#{(s*100).round}%,\\s*#{(l*100).round}%\\(,\\s*[0-9.]\\+\\)\\?)"
 # end
 
 def threedigithex hex
