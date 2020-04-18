@@ -66,8 +66,8 @@ function! vim_sass_colors#run()
 
     " only add $variable name to group
     if l:cname != 'placeholder'
-      let l:new_match =  matchadd(l:group, '\v\$'.l:cname.'([^a-zA-Z0-9-_])@=')
-      let l:new_match2 =  matchadd(l:group, '\v\$'.l:cname.'($)@=')
+      let l:new_match =  matchadd(l:group, '\v[$@]'.l:cname.'([^a-zA-Z0-9-_])@=')
+      let l:new_match2 =  matchadd(l:group, '\v[$@]'.l:cname.'($)@=')
       call add(w:vim_sass_color_matches, l:new_match)
       call add(w:vim_sass_color_matches, l:new_match2)
     endif

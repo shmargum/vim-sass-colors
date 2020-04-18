@@ -431,7 +431,7 @@ CSS_COLORS.each do |k, v|
   CSS_COLORS_INVERSE[v] = k
 end
 
-prefix_regex = /\/(?:stylesheets|sass|scss|style|styles)\//
+prefix_regex = /\/(?:stylesheets|sass|scss|less|style|styles)\//
 if ENV['VIM_SASS_COLORS_BASE_FOLDERS']
   prefix_regex = /\/(?:#{ENV['VIM_SASS_COLORS_BASE_FOLDERS'].split(',').join('|')})\//
 end
