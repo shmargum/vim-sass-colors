@@ -3,7 +3,7 @@ vim-sass-colors
 
 This is a vim plugin to highlight sass/scss/less/css colors and color variables.  It works with imports!
 
-![vim sass colors sample](https://raw.githubusercontent.com/shmargum/vim-sass-colors/master/vim-sass-color-sample-7.png)
+![vim sass colors sample](https://raw.githubusercontent.com/shmargum/vim-sass-colors/master/vim-sass-color-sample-8.png)
 
 ## Installation
 
