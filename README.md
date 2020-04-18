@@ -1,74 +1,58 @@
 vim-sass-colors
 ===============
 
-This is a vim plugin to highlight sass colors and color variables.
-
-This is not meant for regular css files which do not use sass style variables -- there are alternatives with support for more color literal formats out there currently such as [vim-coloresque](https://github.com/gko/vim-coloresque)
+This is a vim plugin to highlight sass/scss/less/css colors and color variables.  It works with imports!
 
 ![vim sass colors sample](https://raw.githubusercontent.com/shmargum/vim-sass-colors/master/vim-sass-color-sample-7.png)
 
-### Instalation
+## Instalation
 
 Install via [pathogen](https://github.com/tpope/vim-pathogen)
-```
+```bash
 cd ~/.vim/bundle
 git clone https://github.com/shmargum/vim-sass-colors.git
 ```
 
 Install via [Vundle](https://github.com/VundleVim/Vundle.vim)
-```
+```vim
 Plugin 'https://github.com/shmargum/vim-sass-colors.git'
 ```
 
-### Dependencies
-* This plugin uses ruby
+## Dependencies
+This plugin uses ruby
 
-### Motivation
+## Features
+* Highlights 3 and 6 digit hex, rgb, rgba, and regular css colors
+* Uses 24 bit colors if available; fallback to a 256 colors approximation otherwise
+* Automatically tries to process imports
+* Automatically tries to import master color definition files
 
-Do you like to keep a color palette in your projects using sass? Do you like to see colorvalues highlighted in pretty colors? Would you find it helpful to quickly scroll through your sass files and see what colors are being used where? Ever find it hard to locate instances of old colors that need to be updated?
-If the answer to any of these questions is 'yes' then this plugin will make you happy.
+## Configuration options
+### Env Vars
+* `VIM_SASS_COLORS_BASE_FOLDERS`
+  * Set the base stylesheet directories
+  * default: `sass,scss,less,css,stylesheets,style,styles`
+* `VIM_SASS_COLORS_BASE_FILES`
+  * Set the default/base file to automatically import
+  * default: `colors,variables`
+Example in .zshrc (or .bashrc)
+```bash
+export VIM_SASS_COLORS_BASE_FILES="colors,variables,custom-file-name"
+export VIM_SASS_COLORS_BASE_FOLDERS="sass,scss,less,css,stylesheets,style,styles,custom-folder-name"
+```
+### Vim Options
+Disable by adding `autocmd BufReadPre,BufNewFile * let b:did_vim_sass_colors = 1` to your .vimrc before the `filetype plugin on` line.
 
-There are several plugins out there that can highlight color literals, but for my projects using sass where we import a common color palette, or import sass partials with color definitions, they were of little use.  This plugin was created for projects like this.  The goal is to be able to use this across projects that use imports and use sass variables to store color values to make it easier to quickly look at one of your stylesheets and update specific colors.
+## Future Plans
+* Add support for hsl, hsla, and any other formats
+* Maybe port ruby to vimscript (ambitious)
 
-### Features
-* Highlights inline 6 digit hex, rgb, and rgba colors
-* Uses 24 bit colors if available, fallback to a 256 colors approximation otherwise
-* Highlights $sass-variables that are assigned a color
-* Highlights $sass-variables that are assigned another $sass-variable that is a color
-* Automatically looks for a default color definition file to include if the current file is within a stylesheets directory
-* Automatically parses and looks for imports (using globbing) relative to a stylesheet directory if the current file is within one, or relative to the folder the current file is in otherwise
-* Imports work with any suffix (so you can import .scss files from a .sass file)
-* If the import starts with `../` we will prepend `../` as many times as needed until we find a file or reach the system root
-* Looks for files with and without leading underscore `_`
-* Is only loaded for .scss or .sass files
+## Notes
+* To get true 24-bit colors you should use a flavor of vim that supports the `termguicolors` option
+* This option is available in iTerm2 and neovim (at least)
 
-### Definitions, constants, and options
-* Default stylesheet directories: `/scss/`, `/sass/`, `/stylesheets/`, `/style/`, `/styles/`
-* Default color imports: `colors` or `_colors` (any suffix)
-* Default color palette: 24 bits, 256 color (approximation) fallback
-* Supported color formats: 6 digit hex, rgb, rgba
-* Disable by adding `autocmd BufReadPre,BufNewFile * let b:did_vim_sass_colors = 1` to your .vimrc before the `filetype plugin on` line.
-
-### Future Plans
-* Add option to toggle 24 bit color mode
-* Add support for hsl, hsla, 3 digit hex, maybe other formats
-* Add option to specify alternative default color file import
-* Add option to specify directory imports
-* More robust imports
-* Maybe add option to exclude certian import paths
-* Maybe port ruby to vimscript
-
-### Notes
-* 24-bit colors
-  * To get true 24-bit colors you should use a flavor of vim that supports the `termguicolors` option
-  * This option is available in iTerm2 and neovim (at least)
-  * Switching over for the first time may change your color scheme, though I just added 3 lines to my .vimrc to set 3 24 bit highlight groups to their former 256 xterm color value
-* 256 colors
-  * If you do not have 24 bit color support enabled in your vim the highlight colors will fallback to a 256 color approximation
-  * This approximation is based on the sum of the squared differences between each r, g, and b value
-
-### Contributing
+## Contributing
 Submit an issue or PR
 
-### License
+## License
 MIT License
