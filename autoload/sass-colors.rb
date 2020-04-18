@@ -723,7 +723,7 @@ end
 # look for a colors definitions file regardless if it is included
 # only do this if this is within a known sass/scss/stylesheets directory otherwise we may look too much
 if style_root_key
-  fnames = ENV['VIM_SASS_COLORS_BASE'] || 'colors,variables'
+  fnames = ENV['VIM_SASS_COLORS_BASE_FILES'] || 'colors,variables'
   fnames.split(',').each do |fname|
     find_files(fname).each do |file|
       unless $included_files.include? file

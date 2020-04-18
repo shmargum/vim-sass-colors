@@ -5,7 +5,7 @@ This is a vim plugin to highlight sass/scss/less/css colors and color variables.
 
 ![vim sass colors sample](https://raw.githubusercontent.com/shmargum/vim-sass-colors/master/vim-sass-color-sample-7.png)
 
-## Instalation
+## Installation
 
 Install via [pathogen](https://github.com/tpope/vim-pathogen)
 ```bash
@@ -22,7 +22,7 @@ Plugin 'https://github.com/shmargum/vim-sass-colors.git'
 This plugin uses ruby
 
 ## Features
-* Highlights 3 and 6 digit hex, rgb, rgba, and regular css colors
+* Highlights 3 and 6 digit hex, rgb(a), hsl(a), and regular css colors
 * Uses 24 bit colors if available; fallback to a 256 colors approximation otherwise
 * Automatically tries to process imports
 * Automatically tries to import master color definition files
@@ -42,10 +42,6 @@ export VIM_SASS_COLORS_BASE_FOLDERS="sass,scss,less,css,stylesheets,style,styles
 ```
 ### Vim Options
 Disable by adding `autocmd BufReadPre,BufNewFile * let b:did_vim_sass_colors = 1` to your .vimrc before the `filetype plugin on` line.
-
-## Future Plans
-* Add support for hsl, hsla, and any other formats
-* Maybe port ruby to vimscript (ambitious)
 
 ## Notes
 * To get true 24-bit colors you should use a flavor of vim that supports the `termguicolors` option
